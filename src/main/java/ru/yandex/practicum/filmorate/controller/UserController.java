@@ -56,9 +56,6 @@ public class UserController {
         users.put(user.getId(), user);
         return user;
     }
-
-
-
     //обновление пользователя
     @PutMapping
     public User update(@RequestBody User updObj) {
