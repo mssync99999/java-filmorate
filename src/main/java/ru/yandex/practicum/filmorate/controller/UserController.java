@@ -76,6 +76,7 @@ public class UserController {
 
         User oldObj = users.get(updObj.getId());
 
+
         //обновляем содержимое
         if (updObj.getName() != null) {
             oldObj.setName(updObj.getName());
