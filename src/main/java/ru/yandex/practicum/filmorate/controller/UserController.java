@@ -57,7 +57,10 @@ public class UserController {
         return user;
     }
 
-    //обновление пользователя
+
+
+
+    //обновл пользователя
     @PutMapping
     public User update(@RequestBody User updObj) {
         log.debug("Изменяется пользователь: {}", updObj);
