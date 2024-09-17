@@ -29,16 +29,16 @@ public class FilmController {
     public Film create(@RequestBody Film film) {
         log.debug("Создается фильм: {}", film);
 
+        //название не может быть пустым
+        if (film.getName() == null || film.getName().isBlank()) {
+            throw new ValidationException("Название не может быть пустым");
+        }
+
         //проверка на дубли
         for (Film entry : films.values()) {
             if (entry.getName().equals(film.getName())) {
                 throw new ValidationException("Этот фильм уже внесён");
             }
-        }
-
-        //название не может быть пустым
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
         }
 
         //+Описание не может быть пустым
