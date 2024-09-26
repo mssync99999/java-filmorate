@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 public class ErrorResponse {
     // название ошибки
-    String error;
+    private String error;
     // подробное описание
-    String description;
+    private String description;
 
     public ErrorResponse(String error, String description) {
         this.error = error;

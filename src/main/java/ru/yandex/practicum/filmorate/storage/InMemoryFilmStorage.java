@@ -23,10 +23,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film create(Film film) {
 
-        //название не может быть пустым
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
-        }
 
         //проверка на дубли
         for (Film entry : films.values()) {
@@ -35,25 +31,13 @@ public class InMemoryFilmStorage implements FilmStorage {
             }
         }
 
-        //Описание не может быть пустым
-        if (film.getDescription() == null || film.getDescription().isBlank()) {
-            throw new ValidationException("Описание не может быть пустым");
-        }
 
-        //Максимальная длина описания — 200 символов
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
 
         //Дата релиза — не раньше 28 декабря 1895 года
         if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
 
-        //Продолжительность фильма должна быть положительным числом
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-        }
 
         // формируем дополнительные данные
         film.setId(getNextId());
@@ -65,10 +49,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        // проверяем необходимые условия
-        if (film.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
-        }
 
         // проверяем необходимые условия
         if (!films.containsKey(film.getId())) {
@@ -79,24 +59,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film oldObj = films.get(film.getId());
 
         //обновляем содержимое
-        if (film.getName() != null) {
-            oldObj.setName(film.getName());
-        }
-
-        //обновляем содержимое
-        if (film.getDescription() != null && film.getDescription().length() <= 200) {
-            oldObj.setDescription(film.getDescription());
-        }
-
-        //обновляем содержимое
-        if (film.getReleaseDate() != null && film.getReleaseDate().isAfter(LocalDate.parse("1895-12-28"))) {
-            oldObj.setReleaseDate(film.getReleaseDate());
-        }
-
-        //обновляем содержимое
-        if (film.getDuration() > 0) {
-            oldObj.setDuration(film.getDuration());
-        }
+        oldObj.setName(film.getName());
+        oldObj.setDescription(film.getDescription());
+        oldObj.setReleaseDate(film.getReleaseDate());
+        oldObj.setDuration(film.getDuration());
 
         return oldObj;
     }

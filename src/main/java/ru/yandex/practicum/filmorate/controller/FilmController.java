@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+
 import java.util.Collection;
 
 
@@ -25,14 +27,14 @@ public class FilmController {
 
     //добавление фильма+
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.debug("Создается фильм: {}", film);
         return filmService.create(film);
     }
 
     //обновление фильма
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.debug("Изменяется фильм: {}", film);
         return filmService.update(film);
 
@@ -56,7 +58,7 @@ public class FilmController {
 
     @GetMapping("/popular")
     public Collection<Film> getFilmsPopular(
-            @RequestParam(value = "count", defaultValue = "10", required = false) long count) {
+            @RequestParam(value = "count", defaultValue = "10") long count) {
         return filmService.getFilmsPopular(count);
     }
 
