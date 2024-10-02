@@ -1,9 +1,12 @@
 # java-filmorate
 Template repository for Filmorate project.
-![filmorate](https://github.com/user-attachments/assets/4e1fc2b9-a102-4929-9875-b2de72b5d6ee)
+![filmorate](https://github.com/user-attachments/assets/954274ab-9f9a-4724-bc54-b99d70192cf5)
 
 
-Код из dbdiagram.io
+
+
+Код из dbdiagram.io ( https://dbdiagram.io/d/66ec7a68a0828f8aa66d7911 )
+
 table users {
 user_id int [pk, increment]
 email varchar(255) [not null]
@@ -27,7 +30,7 @@ mpa_id int [not null, note: 'fk', ref: - mpa.mpa_id]
 
 table film_to_genres {
 genre_film_id int [pk, increment]
-genre_id int [not null, note: 'fk', ref: < genres.genre_id]
+genre_id int [not null, note: 'fk', ref: > genres.genre_id]
 
 
 }
@@ -51,5 +54,6 @@ user_id int [not null, note: 'fk', ref: > users.user_id]
 
 table friendships {
   friendship_user_id int [pk, increment]
-  friend_id int [not null, note: 'fk', ref: < users.user_id]
+  friend_id int [not null, note: 'fk', ref: > users.user_id]
+  status boolean
 }
