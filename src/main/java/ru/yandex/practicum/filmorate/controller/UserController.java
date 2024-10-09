@@ -1,120 +1,78 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-
-
-import java.time.LocalDate;
+import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/users")
+@AllArgsConstructor
 public class UserController {
+    private final UserService userService;
 
-    private Map<Long, User> users = new HashMap<>();
 
     //получение всех фильмов
     @GetMapping
     public Collection<User> findAll() {
-        log.debug("Запрашивается коллекция пользователей: {}", users);
-        return users.values();
+
+        return userService.findAll();
     }
 
     //добавление пользовател
     @PostMapping
     public User create(@RequestBody User user) {
-        log.debug("Создается пользователь: {}", user);
-
-        //электронная почта не может быть пустой и должна содержать символ @
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        }
-
-        //логин не может быть пустым и содержать пробелы
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-
-        //дата рождения не может быть в будущем.
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-
-        // формируем дополнительные данные
-        user.setId(getNextId());
-        //имя для отображения может быть пустым — в таком случае будет использован логин
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        // сохраняем новую публикацию в памяти приложения
-        users.put(user.getId(), user);
-        return user;
+        return userService.create(user);
     }
-
-
 
 
     //обновл пользователя
     @PutMapping
-    public User update(@RequestBody User updObj) {
-        log.debug("Изменяется пользователь: {}", updObj);
-
-        // проверяем необходимые условия
-        if (updObj.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
-        }
-
-        // проверяем необходимые условия
-        if (users.containsValue(updObj.getId())) {
-            throw new ValidationException("Id не найден");
-        }
-
-        User oldObj = users.get(updObj.getId());
-
-
-        //обновляем содержимое
-        if (updObj.getName() != null) {
-            oldObj.setName(updObj.getName());
-        }
-
-        //обновляем содержимое Email
-        if (updObj.getEmail() != null && updObj.getEmail().contains("@")) {
-            oldObj.setEmail(updObj.getEmail());
-        }
-
-        //обновляем содержимое Login
-        if (updObj.getLogin() != null && !updObj.getLogin().contains(" ")) {
-            oldObj.setLogin(updObj.getLogin());
-        }
-
-        //обновляем содержимое Name
-        if (updObj.getName() != null) {
-            oldObj.setName(updObj.getName());
-        }
-
-        //обновляем содержимое Birthday
-        if (updObj.getBirthday() != null && updObj.getBirthday().isBefore(LocalDate.now())) {
-            oldObj.setBirthday(updObj.getBirthday());
-        }
-
-        return oldObj;
+    public User update(@RequestBody User user) {
+        return userService.update(user);
     }
 
-    //вспомогательный метод для генерации идентификатора нового id
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
 
-        return ++currentMaxId;
+
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable long id) {
+        return userService.getUserById(id);
     }
+
+
+    //+ PUT /users/{id}/friends/{friendId} — добавление в друзья.
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+
+    //+ DELETE /users/{id}/friends/{friendId} — удаление из друзей.
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+
+    //+ GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
+    @GetMapping("/{id}/friends")
+    public Collection<User> getUserFriends(@PathVariable long id) {
+        return userService.getUserFriends(id);
+    }
+
+    //+ GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Set<User> getCommonFriends(@PathVariable long id,
+                                      @PathVariable long otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+
 
 }
