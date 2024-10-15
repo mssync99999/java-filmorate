@@ -6,7 +6,9 @@ import java.util.Collection;
 public interface GenreStorage {
 
     Collection<Genre> getGenresByFilmId(long filmId);
+
     Collection<Genre> findAll();
+
     Genre getGenreById(int genreId);
 
 }

@@ -48,31 +48,31 @@ class FilmorateApplicationTests {
 	@BeforeEach
 	public void beforeEach() {
 		firstUser = User.builder()
-				.name("MisterFirst")
-				.login("First")
-				.email("1@ya.ru")
-				.birthday(LocalDate.of(1980, 12, 23))
+				.name("FirstN")
+				.login("FirstL")
+				.email("First@yandex.ru")
+				.birthday(LocalDate.of(2001, 1, 2))
 				.build();
 
 		secondUser = User.builder()
-				.name("MisterSecond")
-				.login("Second")
-				.email("2@ya.ru")
-				.birthday(LocalDate.of(1980, 12, 24))
+				.name("SecondN")
+				.login("SecondL")
+				.email("Second@yandex.ru")
+				.birthday(LocalDate.of(2002, 11, 12))
 				.build();
 
 		thirdUser = User.builder()
-				.name("MisterThird")
-				.login("Third")
-				.email("3@ya.ru")
-				.birthday(LocalDate.of(1980, 12, 25))
+				.name("ThirdN")
+				.login("ThirdL")
+				.email("Third@yandex.ru")
+				.birthday(LocalDate.of(2003, 12, 22))
 				.build();
 
 		firstFilm = Film.builder()
-				.name("Breakfast at Tiffany")
-				.description("American romantic comedy film directed by Blake Edwards, written by George Axelrod")
+				.name("First Film")
+				.description("First Film Description")
 				.releaseDate(LocalDate.of(1961, 10, 5))
-				.duration(114)
+				.duration(110)
 				.build();
 		firstFilm.setMpa(new Mpa(1, "G"));
 		firstFilm.setLikes(new HashSet<>());
@@ -80,20 +80,20 @@ class FilmorateApplicationTests {
 				new Genre(2, "Драма"))));
 
 		secondFilm = Film.builder()
-				.name("Avatar")
-				.description("American epic science fiction film directed, written, produced, and co-edited.")
-				.releaseDate(LocalDate.of(2009, 12, 10))
-				.duration(162)
+				.name("Second Film")
+				.description("Second Film Description")
+				.releaseDate(LocalDate.of(2001, 12, 12))
+				.duration(120)
 				.build();
 		secondFilm.setMpa(new Mpa(3, "PG-13"));
 		secondFilm.setLikes(new HashSet<>());
 		secondFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(6, "Боевик"))));
 
 		thirdFilm = Film.builder()
-				.name("One Flew Over the Cuckoo Nest")
-				.description("American psychological comedy drama film directed by Milos Forman.")
-				.releaseDate(LocalDate.of(1975, 11, 19))
-				.duration(133)
+				.name("Third Film")
+				.description("Third Film Description")
+				.releaseDate(LocalDate.of(1995, 11, 11))
+				.duration(130)
 				.build();
 		thirdFilm.setMpa(new Mpa(4, "R"));
 		thirdFilm.setLikes(new HashSet<>());
@@ -222,7 +222,6 @@ class FilmorateApplicationTests {
         assertEquals(testFilm.getLikes(), firstFilm.getLikes());
         assertEquals(testFilm.getMpa(), firstFilm.getMpa());
         assertEquals(testFilm.getGenres(), firstFilm.getGenres());
-
     }
 
 	//обновление фильма Film
@@ -252,7 +251,7 @@ class FilmorateApplicationTests {
 		firstFilm = filmDbStorage.getFilmById(firstFilm.getId());
 		assertThat(firstFilm.getLikes()).hasSize(1);
 		assertThat(firstFilm.getLikes()).contains(firstUser.getId());
-	};
+	}
 
 	//удаление лайка void
 	@Test
@@ -266,7 +265,7 @@ class FilmorateApplicationTests {
 		firstFilm = filmDbStorage.getFilmById(firstFilm.getId());
 		assertThat(firstFilm.getLikes()).hasSize(1);
 		assertThat(firstFilm.getLikes()).contains(secondUser.getId());
-	};
+	}
 
 	//вывод 10 наиболее популярных фильмов по количеству лайков Collection<Film>
 	@Test
@@ -292,9 +291,9 @@ class FilmorateApplicationTests {
 
 		assertThat(listFilms).hasSize(3);
 
-		assertThat(listFilms.get(0)).hasFieldOrPropertyWithValue("name", "Avatar");
-		assertThat(listFilms.get(1)).hasFieldOrPropertyWithValue("name", "One Flew Over the Cuckoo Nest");
-		assertThat(listFilms.get(2)).hasFieldOrPropertyWithValue("name", "Breakfast at Tiffany");
+		assertThat(listFilms.get(0)).hasFieldOrPropertyWithValue("name", "Second Film");
+		assertThat(listFilms.get(1)).hasFieldOrPropertyWithValue("name", "Third Film");
+		assertThat(listFilms.get(2)).hasFieldOrPropertyWithValue("name", "First Film");
 
 	}
 
