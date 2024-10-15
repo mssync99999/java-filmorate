@@ -1,9 +1,8 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface UserStorage {
 
@@ -31,6 +30,7 @@ public interface UserStorage {
     Collection<User> getUserFriends(long id);
 
     //+ GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
-    Set<User> getCommonFriends(long idA, long idB);
+    Collection<User> getCommonFriends(long idA, long idB);
 
+    boolean deleteUser(User user);
 }

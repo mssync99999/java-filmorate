@@ -3,15 +3,22 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
+import lombok.Builder;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Film {
     @PositiveOrZero(message = "Id должен быть указан")
     private Long id;
@@ -28,6 +35,8 @@ public class Film {
     private int duration;
 
     private Set<Long> likes;
+    private Mpa mpa;
+    private Collection<Genre> genres;
 
     public void addLike(Long id) {
         if (likes == null) {

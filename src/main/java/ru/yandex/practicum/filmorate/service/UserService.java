@@ -10,9 +10,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.Collection;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -58,7 +57,7 @@ public class UserService {
     }
 
     //+ GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
-    public Set<User> getCommonFriends(long idA,long idB) {
+    public Collection<User> getCommonFriends(long idA,long idB) {
         return userStorage.getCommonFriends(idA, idB);
     }
 

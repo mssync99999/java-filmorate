@@ -10,8 +10,9 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import java.util.Collection;
 
 
@@ -20,6 +21,7 @@ import java.util.Collection;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final LikeDbStorage likeDbStorage;
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
@@ -41,7 +43,7 @@ public class FilmService {
 
     public void addLike(long filmId, long userId) {
         userStorage.getUserById(userId);
-        filmStorage.addLike(filmId, userId);
+        likeDbStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(long filmId, long userId) {

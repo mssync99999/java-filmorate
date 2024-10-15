@@ -28,14 +28,14 @@ public class FilmController {
     //добавление фильма+
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.debug("Создается фильм: {}", film);
+        log.info("Создается фильм: {}", film);
         return filmService.create(film);
     }
 
     //обновление фильма
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        log.debug("Изменяется фильм: {}", film);
+        log.info("Изменяется фильм: {}", film);
         return filmService.update(film);
 
     }
