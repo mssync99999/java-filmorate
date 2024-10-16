@@ -9,14 +9,14 @@ import lombok.Builder;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+
 
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Film {
@@ -34,7 +34,7 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private int duration;
 
-    private Set<Long> likes;
+    private Collection<Long> likes;
     private Mpa mpa;
     private Collection<Genre> genres;
 

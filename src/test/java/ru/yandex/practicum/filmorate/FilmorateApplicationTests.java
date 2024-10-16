@@ -13,7 +13,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.friend.FriendDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
@@ -33,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmorateApplicationTests {
 	private final UserDbStorage userDbStorage;
+	private final FriendDbStorage friendDbStorage;
 	private final FilmDbStorage filmDbStorage;
+	private final FilmService filmService;
 	private final GenreDbStorage genreDbStorage;
 	private final MpaDbStorage mpaDbStorage;
 	private final LikeDbStorage likeDbStorage;
@@ -75,9 +79,9 @@ class FilmorateApplicationTests {
 				.duration(110)
 				.build();
 		firstFilm.setMpa(new Mpa(1, "G"));
-		firstFilm.setLikes(new HashSet<>());
-		firstFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(1, "Комедия"),
-				new Genre(2, "Драма"))));
+		firstFilm.setLikes(new ArrayList<>()); //HashSet<>());
+		firstFilm.setGenres(new ArrayList<>(Arrays.asList(new Genre(1, "Комедия"),
+				new Genre(2, "Драма")))); // new HashSet<>(
 
 		secondFilm = Film.builder()
 				.name("Second Film")
@@ -86,8 +90,9 @@ class FilmorateApplicationTests {
 				.duration(120)
 				.build();
 		secondFilm.setMpa(new Mpa(3, "PG-13"));
-		secondFilm.setLikes(new HashSet<>());
-		secondFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(6, "Боевик"))));
+		secondFilm.setLikes(new ArrayList<>()); //new HashSet<>()
+		secondFilm.setGenres(new ArrayList<>(Arrays.asList(new Genre(6, "Боевик"))));
+		//new HashSet<>(Arrays.asList(new Genre(6, "Боевик")))
 
 		thirdFilm = Film.builder()
 				.name("Third Film")
@@ -96,8 +101,8 @@ class FilmorateApplicationTests {
 				.duration(130)
 				.build();
 		thirdFilm.setMpa(new Mpa(4, "R"));
-		thirdFilm.setLikes(new HashSet<>());
-		thirdFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(2, "Драма"))));
+		thirdFilm.setLikes(new ArrayList<>()); //HashSet
+		thirdFilm.setGenres(new ArrayList<>(Arrays.asList(new Genre(2, "Драма")))); //HashSet
 	}
 
 	//***UserDbStorageTest***
@@ -143,9 +148,9 @@ class FilmorateApplicationTests {
 	public void addFriendTestA() {
 		firstUser = userDbStorage.create(firstUser);
 		secondUser = userDbStorage.create(secondUser);
-		userDbStorage.addFriend(firstUser.getId(), secondUser.getId());
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).hasSize(1);
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).contains(secondUser);
+		friendDbStorage.addFriend(firstUser.getId(), secondUser.getId());
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).hasSize(1);
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).contains(secondUser);
 	}
 
 	//удаление из друзей DELETE /users/{id}/friends/{friendId}
@@ -154,11 +159,11 @@ class FilmorateApplicationTests {
 		firstUser = userDbStorage.create(firstUser);
 		secondUser = userDbStorage.create(secondUser);
 		thirdUser = userDbStorage.create(thirdUser);
-		userDbStorage.addFriend(firstUser.getId(), secondUser.getId());
-		userDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
-		userDbStorage.deleteFriend(firstUser.getId(), secondUser.getId());
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).hasSize(1);
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).contains(thirdUser);
+		friendDbStorage.addFriend(firstUser.getId(), secondUser.getId());
+		friendDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
+		friendDbStorage.deleteFriend(firstUser.getId(), secondUser.getId());
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).hasSize(1);
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).contains(thirdUser);
 	}
 
 	//возвращаем список пользователей, являющихся его друзьями Collection<User> + GET /users/{id}/friends
@@ -167,11 +172,11 @@ class FilmorateApplicationTests {
 		firstUser = userDbStorage.create(firstUser);
 		secondUser = userDbStorage.create(secondUser);
 		thirdUser = userDbStorage.create(thirdUser);
-		userDbStorage.addFriend(firstUser.getId(), secondUser.getId());
-		userDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).hasSize(2);
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).contains(secondUser);
-		assertThat(userDbStorage.getUserFriends(firstUser.getId())).contains(thirdUser);
+		friendDbStorage.addFriend(firstUser.getId(), secondUser.getId());
+		friendDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).hasSize(2);
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).contains(secondUser);
+		assertThat(friendDbStorage.getUserFriends(firstUser.getId())).contains(thirdUser);
 	}
 
 	//список друзей, общих с другим пользователем Collection<User> + GET /users/{id}/friends/common/{otherId}
@@ -180,12 +185,12 @@ class FilmorateApplicationTests {
 		firstUser = userDbStorage.create(firstUser);
 		secondUser = userDbStorage.create(secondUser);
 		thirdUser = userDbStorage.create(thirdUser);
-		userDbStorage.addFriend(firstUser.getId(), secondUser.getId());
-		userDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
-		userDbStorage.addFriend(secondUser.getId(), firstUser.getId());
-		userDbStorage.addFriend(secondUser.getId(), thirdUser.getId());
-		assertThat(userDbStorage.getCommonFriends(firstUser.getId(), secondUser.getId())).hasSize(1);
-		assertThat(userDbStorage.getCommonFriends(firstUser.getId(), secondUser.getId())).contains(thirdUser);
+		friendDbStorage.addFriend(firstUser.getId(), secondUser.getId());
+		friendDbStorage.addFriend(firstUser.getId(), thirdUser.getId());
+		friendDbStorage.addFriend(secondUser.getId(), firstUser.getId());
+		friendDbStorage.addFriend(secondUser.getId(), thirdUser.getId());
+		assertThat(friendDbStorage.getCommonFriends(firstUser.getId(), secondUser.getId())).hasSize(1);
+		assertThat(friendDbStorage.getCommonFriends(firstUser.getId(), secondUser.getId())).contains(thirdUser);
 	}
 
 	//удаление пользователя boolean DELETE /users/{id}
@@ -201,10 +206,10 @@ class FilmorateApplicationTests {
 	//получение всех фильмов Collection<Film>
 	@Test
 	public void findAllFilmTest() {
-		firstFilm = filmDbStorage.create(firstFilm);
-		secondFilm = filmDbStorage.create(secondFilm);
-		thirdFilm = filmDbStorage.create(thirdFilm);
-		Collection<Film> listFilms = filmDbStorage.findAll();
+		firstFilm = filmService.create(firstFilm);
+		secondFilm = filmService.create(secondFilm);
+		thirdFilm = filmService.create(thirdFilm);
+		Collection<Film> listFilms = filmService.findAll();
 
 		assertTrue(listFilms.contains(firstFilm));
 		assertTrue(listFilms.contains(secondFilm));
@@ -228,27 +233,28 @@ class FilmorateApplicationTests {
 	//получать каждый фильм по уникальному идентификатору Film
 	@Test
 	public void updateAndFindFilmTest() {
-		Film testFilm = filmDbStorage.create(firstFilm);
+		Film testFilm = filmService.create(firstFilm);
 		secondFilm.setId(testFilm.getId());
-		filmDbStorage.update(secondFilm);
-		Film testFilmUpd = filmDbStorage.getFilmById(testFilm.getId());
+		filmService.update(secondFilm);
+		Film testFilmUpd = filmService.getFilmById(testFilm.getId());
 
 		assertEquals(testFilmUpd.getDescription(), secondFilm.getDescription());
 		assertEquals(testFilmUpd.getName(), secondFilm.getName());
 		assertEquals(testFilmUpd.getDuration(), secondFilm.getDuration());
 		assertEquals(testFilmUpd.getReleaseDate(), secondFilm.getReleaseDate());
-		assertEquals(testFilmUpd.getLikes(), secondFilm.getLikes());
+		assertTrue(testFilmUpd.getLikes().containsAll(secondFilm.getLikes()));
 		assertEquals(testFilmUpd.getMpa(), secondFilm.getMpa());
-		assertEquals(testFilmUpd.getGenres(), secondFilm.getGenres());
+		assertTrue(testFilmUpd.getGenres().containsAll(secondFilm.getGenres()));
 	}
 
 	//добавление лайка void
 	@Test
 	public void addLikeTest() {
 		firstUser = userDbStorage.create(firstUser);
-		firstFilm = filmDbStorage.create(firstFilm);
-		filmDbStorage.getLikeDbStorage().addLike(firstFilm.getId(), firstUser.getId());
-		firstFilm = filmDbStorage.getFilmById(firstFilm.getId());
+		firstFilm = filmService.create(firstFilm);
+		//filmDbStorage.getLikeDbStorage().addLike(firstFilm.getId(), firstUser.getId());
+		likeDbStorage.addLike(firstFilm.getId(), firstUser.getId());
+		firstFilm = filmService.getFilmById(firstFilm.getId());
 		assertThat(firstFilm.getLikes()).hasSize(1);
 		assertThat(firstFilm.getLikes()).contains(firstUser.getId());
 	}
@@ -259,10 +265,11 @@ class FilmorateApplicationTests {
 		firstUser = userDbStorage.create(firstUser);
 		secondUser = userDbStorage.create(secondUser);
 		firstFilm = filmDbStorage.create(firstFilm);
-		filmDbStorage.getLikeDbStorage().addLike(firstFilm.getId(), firstUser.getId());
-		filmDbStorage.getLikeDbStorage().addLike(firstFilm.getId(), secondUser.getId());
-		filmDbStorage.getLikeDbStorage().deleteLike(firstFilm.getId(), firstUser.getId());
-		firstFilm = filmDbStorage.getFilmById(firstFilm.getId());
+		likeDbStorage.addLike(firstFilm.getId(), firstUser.getId());
+		likeDbStorage.addLike(firstFilm.getId(), secondUser.getId());
+		likeDbStorage.deleteLike(firstFilm.getId(), firstUser.getId());
+
+		firstFilm = filmService.getFilmById(firstFilm.getId());
 		assertThat(firstFilm.getLikes()).hasSize(1);
 		assertThat(firstFilm.getLikes()).contains(secondUser.getId());
 	}
@@ -276,21 +283,20 @@ class FilmorateApplicationTests {
 		thirdUser = userDbStorage.create(thirdUser);
 
 		firstFilm = filmDbStorage.create(firstFilm);
-		filmDbStorage.getLikeDbStorage().addLike(firstFilm.getId(), firstUser.getId());
+		likeDbStorage.addLike(firstFilm.getId(), firstUser.getId());
 
 		secondFilm = filmDbStorage.create(secondFilm);
-		filmDbStorage.getLikeDbStorage().addLike(secondFilm.getId(), firstUser.getId());
-		filmDbStorage.getLikeDbStorage().addLike(secondFilm.getId(), secondUser.getId());
-		filmDbStorage.getLikeDbStorage().addLike(secondFilm.getId(), thirdUser.getId());
+		likeDbStorage.addLike(secondFilm.getId(), firstUser.getId());
+		likeDbStorage.addLike(secondFilm.getId(), secondUser.getId());
+		likeDbStorage.addLike(secondFilm.getId(), thirdUser.getId());
 
 		thirdFilm = filmDbStorage.create(thirdFilm);
-		filmDbStorage.getLikeDbStorage().addLike(thirdFilm.getId(), firstUser.getId());
-		filmDbStorage.getLikeDbStorage().addLike(thirdFilm.getId(), secondUser.getId());
+		likeDbStorage.addLike(thirdFilm.getId(), firstUser.getId());
+		likeDbStorage.addLike(thirdFilm.getId(), secondUser.getId());
 
 		List<Film> listFilms = (List<Film>) filmDbStorage.getFilmsPopular(5);
 
 		assertThat(listFilms).hasSize(3);
-
 		assertThat(listFilms.get(0)).hasFieldOrPropertyWithValue("name", "Second Film");
 		assertThat(listFilms.get(1)).hasFieldOrPropertyWithValue("name", "Third Film");
 		assertThat(listFilms.get(2)).hasFieldOrPropertyWithValue("name", "First Film");
