@@ -1,25 +1,9 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.friend;
 
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.util.Collection;
-import java.util.Set;
 
-public interface UserStorage {
-
-    //получение всех фильмов
-    Collection<User> findAll();
-
-    //добавление пользовател
-    User create(User user);
-
-    //обновл пользователя
-    User update(User user);
-
-    //вспомогательный метод для генерации идентификатора нового id
-    long getNextId();
-
-    User getUserById(long id);
+public interface FriendStorage {
 
     //+ PUT /users/{id}/friends/{friendId} — добавление в друзья.
     void addFriend(long id, long friendId);
@@ -31,6 +15,6 @@ public interface UserStorage {
     Collection<User> getUserFriends(long id);
 
     //+ GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
-    Set<User> getCommonFriends(long idA, long idB);
+    Collection<User> getCommonFriends(long idA, long idB);
 
 }
